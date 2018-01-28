@@ -55,6 +55,9 @@ public class BlockGratedHopper extends BlockBase implements IBlockStorage, GUIHo
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.DOWN).withProperty(ENABLED, true));
         this.setTileClass(TileGratedHopper.class);
         this.setIgnoredProperties(new IProperty[] {ENABLED});
+        this.setFullCube(false);
+        this.setOpaque(false);
+        this.setRenderLayer(BlockRenderLayer.CUTOUT_MIPPED);
     }
 
     @Override
@@ -107,18 +110,6 @@ public class BlockGratedHopper extends BlockBase implements IBlockStorage, GUIHo
             worldIn.setBlockState(pos, state.withProperty(ENABLED, flag), 4);
     }
 
-    @Override
-    public boolean isFullCube(IBlockState state)
-    {
-        return false;
-    }
-
-    @Override
-    public boolean isOpaqueCube(IBlockState state)
-    {
-        return false;
-    }
-
     public static EnumFacing getFacing(int meta)
     {
         return EnumFacing.getFront(meta & 7);
@@ -134,13 +125,6 @@ public class BlockGratedHopper extends BlockBase implements IBlockStorage, GUIHo
     public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side)
     {
         return true;
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public BlockRenderLayer getBlockLayer()
-    {
-        return BlockRenderLayer.CUTOUT_MIPPED;
     }
 
     @Override

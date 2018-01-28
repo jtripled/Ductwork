@@ -32,7 +32,7 @@ public class GUIGratedHopper extends GUIContainerTile<ContainerGratedHopper>
     }
     
     @Override
-    public void addButtons(int x, int y)
+    public void addElements(int x, int y)
     {
         this.addButton(new GUIButtonToggle(x + 138, y + 43) {
                 @Override

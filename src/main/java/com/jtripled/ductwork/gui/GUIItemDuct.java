@@ -1,9 +1,8 @@
 package com.jtripled.ductwork.gui;
 
-import com.jtripled.ductwork.Ductwork;
 import com.jtripled.ductwork.container.ContainerItemDuct;
 import com.jtripled.voxen.gui.GUIContainerTile;
-import net.minecraft.util.ResourceLocation;
+import com.jtripled.voxen.gui.GUIInventorySlot;
 
 /**
  *
@@ -11,17 +10,15 @@ import net.minecraft.util.ResourceLocation;
  */
 public class GUIItemDuct extends GUIContainerTile<ContainerItemDuct>
 {
-    public static final ResourceLocation TEXTURE = new ResourceLocation(Ductwork.ID, "textures/gui/item_duct.png");
-
     public GUIItemDuct(ContainerItemDuct container)
     {
         super(container);
-        this.ySize = 132;
+        this.setType(Type.INVENTORY_1);
     }
-
+    
     @Override
-    public ResourceLocation getTexture()
+    public void addElements(int x, int y)
     {
-        return TEXTURE;
+        this.addElement(new GUIInventorySlot(this, 79, 17));
     }
 }

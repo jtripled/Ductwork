@@ -4,7 +4,6 @@ import com.jtripled.ductwork.Ductwork;
 import com.jtripled.ductwork.container.ContainerGratedHopper;
 import com.jtripled.ductwork.network.MessageHopperBlacklist;
 import com.jtripled.ductwork.tile.TileGratedHopper;
-import com.jtripled.voxen.gui.GUIButton;
 import com.jtripled.voxen.gui.GUIButtonToggle;
 import com.jtripled.voxen.gui.GUIContainerTile;
 import net.minecraft.util.ResourceLocation;
@@ -34,24 +33,25 @@ public class GUIGratedHopper extends GUIContainerTile<ContainerGratedHopper>
     @Override
     public void addElements(int x, int y)
     {
-        this.addButton(new GUIButtonToggle(x + 138, y + 43) {
+        this.addElement(new GUIButtonToggle(this, x + 138, y + 43) {
                 @Override
                 public boolean getState() {
                     return getBlacklistState();
                 }
                 @Override
-                public String getTooltip(boolean state) {
+                public String[] getTooltip(boolean state) {
                     TextComponentString message = new TextComponentString(state ? Ductwork.INSTANCE.getProxy().localize("ductwork.blacklist") : Ductwork.INSTANCE.getProxy().localize("ductwork.whitelist"));
                     message.getStyle().setColor(state ? TextFormatting.RED : TextFormatting.GRAY);
-                    return message.getFormattedText();
-                }},
-                (GUIButton button) -> {
-                    TileGratedHopper tile = this.getContainer().getTile();
+                    return new String[] { message.getFormattedText() };
+                }
+                @Override
+                public void onClick() {
+                    TileGratedHopper tile = container.getTile();
                     boolean blacklist = !tile.isBlacklist();
                     tile.setBlacklist(blacklist);
                     tile.markDirty();
                     Ductwork.INSTANCE.getNetwork().sendToServer(new MessageHopperBlacklist(tile.getPos(), blacklist));
-                });
+                }});
     }
     
     @Override

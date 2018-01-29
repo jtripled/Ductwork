@@ -12,13 +12,14 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
  *
  * @author jtripled
  */
-@Mod(modid = Ductwork.ID, name = Ductwork.NAME, version = Ductwork.VERSION)
+@Mod(modid = Ductwork.ID, name = Ductwork.NAME, version = Ductwork.VERSION, dependencies = Ductwork.DEPENDS)
 @Mod.EventBusSubscriber
 public class Ductwork extends ModBase
 {
     public static final String ID = "ductwork";
     public static final String NAME = "Ductwork";
     public static final String VERSION = "1.0";
+    public static final String DEPENDS = "required-after:voxen";
     
     @Mod.Instance(Ductwork.ID)
     public static Ductwork INSTANCE;

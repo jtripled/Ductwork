@@ -7,6 +7,7 @@ import com.jtripled.ductwork.tile.TileItemDuct;
 import com.jtripled.voxen.block.BlockDuct;
 import com.jtripled.voxen.block.IBlockStorage;
 import com.jtripled.voxen.gui.GUIHolder;
+import com.jtripled.voxen.mod.ModBase;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
@@ -26,7 +27,7 @@ public class BlockItemDuct extends BlockDuct implements IBlockStorage, GUIHolder
 {
     public BlockItemDuct()
     {
-        super(Ductwork.INSTANCE, "item_duct", Material.IRON);
+        super("item_duct", Material.IRON);
         this.setTab(CreativeTabs.REDSTONE);
         this.setItem();
         this.setTileClass(TileItemDuct.class);
@@ -49,5 +50,11 @@ public class BlockItemDuct extends BlockDuct implements IBlockStorage, GUIHolder
     public GUIItemDuct getClientGUI(EntityPlayer player, World world, BlockPos pos)
     {
         return new GUIItemDuct(getServerGUI(player, world, pos));
+    }
+
+    @Override
+    public ModBase getGUIOwner()
+    {
+        return Ductwork.INSTANCE;
     }
 }

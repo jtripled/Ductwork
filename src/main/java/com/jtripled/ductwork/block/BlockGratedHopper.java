@@ -7,6 +7,7 @@ import com.jtripled.ductwork.tile.TileGratedHopper;
 import com.jtripled.voxen.block.BlockBase;
 import com.jtripled.voxen.block.IBlockStorage;
 import com.jtripled.voxen.gui.GUIHolder;
+import com.jtripled.voxen.mod.ModBase;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.block.Block;
@@ -49,7 +50,7 @@ public class BlockGratedHopper extends BlockBase implements IBlockStorage, GUIHo
     
     public BlockGratedHopper()
     {
-        super(Ductwork.INSTANCE, "grated_hopper", Material.IRON);
+        super("grated_hopper", Material.IRON);
         this.setTab(CreativeTabs.REDSTONE);
         this.setItem();
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.DOWN).withProperty(ENABLED, true));
@@ -171,5 +172,11 @@ public class BlockGratedHopper extends BlockBase implements IBlockStorage, GUIHo
     public GUIGratedHopper getClientGUI(EntityPlayer player, World world, BlockPos pos)
     {
         return new GUIGratedHopper(getServerGUI(player, world, pos));
+    }
+
+    @Override
+    public ModBase getGUIOwner()
+    {
+        return Ductwork.INSTANCE;
     }
 }

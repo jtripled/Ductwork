@@ -45,4 +45,6 @@ public class BlockFilterHopper extends BlockBase implements IBlockFaceable.NoUp,
     {
         return new GUIFilterHopper(getServerGUI(player, world, pos));
     }
+    
+    
 }

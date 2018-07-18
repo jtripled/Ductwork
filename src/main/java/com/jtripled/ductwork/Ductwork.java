@@ -1,12 +1,13 @@
 package com.jtripled.ductwork;
 
-import com.jtripled.voxen.mod.ModBase;
-import com.jtripled.voxen.mod.Registry;
-import com.jtripled.voxen.network.Network;
+import com.jtripled.ductwork.network.MessageHandlerHopperBlacklist;
+import com.jtripled.ductwork.network.MessageHopperBlacklist;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.relauncher.Side;
 
 /**
  *
@@ -14,46 +15,39 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
  */
 @Mod(modid = Ductwork.ID, name = Ductwork.NAME, version = Ductwork.VERSION, dependencies = Ductwork.DEPENDS)
 @Mod.EventBusSubscriber
-public class Ductwork extends ModBase
+public class Ductwork
 {
     public static final String ID = "ductwork";
     public static final String NAME = "Ductwork";
     public static final String VERSION = "1.0";
-    public static final String DEPENDS = "required-after:voxenforge";
+    public static final String DEPENDS = "";
     
     @Mod.Instance(Ductwork.ID)
     public static Ductwork INSTANCE;
     
-    public static Registry REGISTRY;
+    public static final SimpleNetworkWrapper NETWORK = new SimpleNetworkWrapper(ID);
     
-    public static final Network NETWORK = new Network(ID);
+    public static Ductwork getInstance()
+    {
+        return INSTANCE;
+    }
 
-    @Override
-    public String getID()
+    public static String getID()
     {
         return ID;
     }
 
-    @Override
-    public String getName()
+    public static String getName()
     {
         return NAME;
     }
 
-    @Override
-    public String getVersion()
+    public static String getVersion()
     {
         return VERSION;
     }
     
-    @Override
-    public Registry getRegistry()
-    {
-        return REGISTRY;
-    }
-    
-    @Override
-    public Network getNetwork()
+    public SimpleNetworkWrapper getNetwork()
     {
         return NETWORK;
     }
@@ -61,19 +55,18 @@ public class Ductwork extends ModBase
     @Mod.EventHandler
     public void onPreInit(FMLPreInitializationEvent event)
     {
-        REGISTRY = new DuctworkRegistry();
-        preInit(event);
+        
     }
     
     @Mod.EventHandler
     public void onInit(FMLInitializationEvent event)
     {
-        init(event);
+        NETWORK.registerMessage(MessageHandlerHopperBlacklist.class, MessageHopperBlacklist.class, 0, Side.SERVER);
     }
     
     @Mod.EventHandler
     public void onPostInit(FMLPostInitializationEvent event)
     {
-        postInit(event);
+        
     }
 }

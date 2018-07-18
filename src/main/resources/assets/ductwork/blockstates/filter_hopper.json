@@ -1,0 +1,9 @@
+{
+    "variants": {
+        "facing=down": { "model": "ductwork:filter_hopper" },
+        "facing=north": { "model": "ductwork:filter_hopper_side" },
+        "facing=east": { "model": "ductwork:filter_hopper_side", "y": 90 },
+        "facing=south": { "model": "ductwork:filter_hopper_side", "y": 180 },
+        "facing=west": { "model": "ductwork:filter_hopper_side", "y": 270 }
+    }
+}

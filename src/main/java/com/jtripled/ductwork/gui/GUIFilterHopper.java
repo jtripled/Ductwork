@@ -1,12 +1,13 @@
 package com.jtripled.ductwork.gui;
 
 import com.jtripled.ductwork.Ductwork;
-import com.jtripled.ductwork.container.ContainerGratedHopper;
+import com.jtripled.ductwork.container.ContainerFilterHopper;
 import com.jtripled.ductwork.network.MessageHopperBlacklist;
-import com.jtripled.ductwork.tile.TileGratedHopper;
+import com.jtripled.ductwork.tile.TileFilterHopper;
 import com.jtripled.voxen.gui.GUIButtonToggle;
 import com.jtripled.voxen.gui.GUIContainerTile;
-import net.minecraft.util.ResourceLocation;
+import com.jtripled.voxen.gui.GUIInventorySlot;
+import com.jtripled.voxen.gui.GUIInventorySlotBlacklist;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 
@@ -14,29 +15,34 @@ import net.minecraft.util.text.TextFormatting;
  *
  * @author jtripled
  */
-public class GUIGratedHopper extends GUIContainerTile<ContainerGratedHopper>
+public class GUIFilterHopper extends GUIContainerTile<ContainerFilterHopper>
 {
-    public static final ResourceLocation TEXTURE = new ResourceLocation(Ductwork.ID, "textures/gui/grated_hopper.png");
-    
-    public GUIGratedHopper(ContainerGratedHopper container)
+    public GUIFilterHopper(ContainerFilterHopper container)
     {
         super(container);
-        this.xSize = 176;
-        this.ySize = 159;
-    }
-    
-    public boolean getBlacklistState()
-    {
-        return container.getTile().isBlacklist();
+        this.setType(Type.INVENTORY_2_5);
     }
     
     @Override
     public void addElements(int x, int y)
     {
+        for (int i = 0; i < 5; i++)
+        {
+            this.addElement(new GUIInventorySlot(this, 43 + i * 18, 17));
+        }
+        for (int i = 0; i < 5; i++)
+        {
+            this.addElement(new GUIInventorySlotBlacklist(this, 43 + i * 18, 44) {
+                @Override
+                public boolean getBlacklistState() {
+                    return container.getTile().isBlacklist();
+                }
+            });
+        }
         this.addElement(new GUIButtonToggle(this, x + 138, y + 43) {
                 @Override
                 public boolean getState() {
-                    return getBlacklistState();
+                    return container.getTile().isBlacklist();
                 }
                 @Override
                 public String[] getTooltip(boolean state) {
@@ -46,24 +52,11 @@ public class GUIGratedHopper extends GUIContainerTile<ContainerGratedHopper>
                 }
                 @Override
                 public void onClick() {
-                    TileGratedHopper tile = container.getTile();
+                    TileFilterHopper tile = container.getTile();
                     boolean blacklist = !tile.isBlacklist();
                     tile.setBlacklist(blacklist);
                     tile.markDirty();
                     Ductwork.INSTANCE.getNetwork().sendToServer(new MessageHopperBlacklist(tile.getPos(), blacklist));
                 }});
-    }
-    
-    @Override
-    public void drawBackground(float ticks, int mouseX, int mouseY, int x, int y)
-    {
-        if (getBlacklistState())
-            drawTexturedModalRect(x + 44, y + 45, 0, 159, 88, 16);
-    }
-
-    @Override
-    public ResourceLocation getTexture()
-    {
-        return TEXTURE;
     }
 }

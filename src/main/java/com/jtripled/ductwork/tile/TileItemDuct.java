@@ -1,6 +1,7 @@
 package com.jtripled.ductwork.tile;
 
-import com.jtripled.voxen.block.BlockDuct;
+import com.jtripled.voxen.block.IBlockConnectable;
+import com.jtripled.voxen.block.IBlockFaceable;
 import com.jtripled.voxen.tile.ITileTransferable;
 import com.jtripled.voxen.tile.TileBase;
 import javax.annotation.Nullable;
@@ -33,7 +34,7 @@ public class TileItemDuct extends TileBase implements ITileTransferable
     
     public EnumFacing getFacing()
     {
-        return this.world.getBlockState(this.getPos()).getValue(BlockDuct.FACING);
+        return this.world.getBlockState(this.getPos()).getValue(IBlockFaceable.FACING);
     }
 
     @Override
@@ -50,6 +51,11 @@ public class TileItemDuct extends TileBase implements ITileTransferable
         return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY
                 && (facing == null || facing == this.getFacing())
                 ? (T)inventory : null;
+    }
+    
+    public IItemHandler getInventory()
+    {
+        return inventory;
     }
 
     @Override
@@ -136,16 +142,16 @@ public class TileItemDuct extends TileBase implements ITileTransferable
         }
         for (EnumFacing face : next)
         {
-            if (face != state.getValue(BlockDuct.FACING))
+            if (face != state.getValue(IBlockFaceable.FACING))
             {
                 switch (face)
                 {
-                    case DOWN: if (state.getValue(BlockDuct.DOWN)) return face; break;
-                    case UP: if (state.getValue(BlockDuct.UP)) return face; break;
-                    case NORTH: if (state.getValue(BlockDuct.NORTH)) return face; break;
-                    case SOUTH: if (state.getValue(BlockDuct.SOUTH)) return face; break;
-                    case WEST: if (state.getValue(BlockDuct.WEST)) return face; break;
-                    default: if (state.getValue(BlockDuct.EAST)) return EnumFacing.EAST; break;
+                    case DOWN: if (state.getValue(IBlockConnectable.All.DOWN)) return face; break;
+                    case UP: if (state.getValue(IBlockConnectable.All.UP)) return face; break;
+                    case NORTH: if (state.getValue(IBlockConnectable.All.NORTH)) return face; break;
+                    case SOUTH: if (state.getValue(IBlockConnectable.All.SOUTH)) return face; break;
+                    case WEST: if (state.getValue(IBlockConnectable.All.WEST)) return face; break;
+                    default: if (state.getValue(IBlockConnectable.All.EAST)) return EnumFacing.EAST; break;
                 }
             }
         }

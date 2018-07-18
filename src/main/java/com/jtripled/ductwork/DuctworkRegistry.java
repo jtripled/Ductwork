@@ -14,13 +14,13 @@ import net.minecraftforge.fml.relauncher.Side;
  */
 public class DuctworkRegistry implements Registry
 {
-    public static final IBlockBase GRATED_HOPPER = new BlockGratedHopper();
+    public static final IBlockBase FILTER_HOPPER = new BlockFilterHopper();
     public static final IBlockBase ITEM_DUCT = new BlockItemDuct();
     
     @Override
     public void onRegisterBlocks(RegistrationHandler handler)
     {
-        handler.registerBlock(GRATED_HOPPER);
+        handler.registerBlock(FILTER_HOPPER);
         handler.registerBlock(ITEM_DUCT);
     }
     

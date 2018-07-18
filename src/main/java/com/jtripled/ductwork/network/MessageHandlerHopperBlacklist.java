@@ -1,6 +1,6 @@
 package com.jtripled.ductwork.network;
 
-import com.jtripled.ductwork.tile.TileGratedHopper;
+import com.jtripled.ductwork.tile.TileFilterHopper;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -22,8 +22,8 @@ public class MessageHandlerHopperBlacklist implements IMessageHandler<MessageHop
         boolean blacklist = message.getBlacklist();
         TileEntity tile = player.world.getTileEntity(location);
         
-        if (tile instanceof TileGratedHopper)
-            ((TileGratedHopper) tile).setBlacklist(blacklist);
+        if (tile instanceof TileFilterHopper)
+            ((TileFilterHopper) tile).setBlacklist(blacklist);
         
         return null;
     }

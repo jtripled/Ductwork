@@ -1,9 +1,0 @@
-{
-    "variants": {
-        "facing=down": { "model": "ductwork:grated_hopper" },
-        "facing=north": { "model": "ductwork:grated_hopper_side" },
-        "facing=east": { "model": "ductwork:grated_hopper_side", "y": 90 },
-        "facing=south": { "model": "ductwork:grated_hopper_side", "y": 180 },
-        "facing=west": { "model": "ductwork:grated_hopper_side", "y": 270 }
-    }
-}

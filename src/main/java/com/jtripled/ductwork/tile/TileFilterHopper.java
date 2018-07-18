@@ -1,6 +1,7 @@
 package com.jtripled.ductwork.tile;
 
-import com.jtripled.ductwork.block.BlockGratedHopper;
+import com.jtripled.ductwork.block.BlockFilterHopper;
+import com.jtripled.voxen.block.IBlockFaceable;
 import com.jtripled.voxen.tile.ITileTransferable;
 import com.jtripled.voxen.tile.TileBase;
 import javax.annotation.Nonnull;
@@ -18,14 +19,14 @@ import net.minecraftforge.items.ItemStackHandler;
  *
  * @author jtripled
  */
-public class TileGratedHopper extends TileBase implements ITileTransferable
+public class TileFilterHopper extends TileBase implements ITileTransferable
 {
     private final ItemStackHandler filter;
     private final ItemStackHandler inventory;
     private int transferCooldown;
     private boolean blacklist;
     
-    public TileGratedHopper()
+    public TileFilterHopper()
     {
         TileEntity tile = this;
         this.filter = new ItemStackHandler(5) {
@@ -68,21 +69,12 @@ public class TileGratedHopper extends TileBase implements ITileTransferable
                 for (int i = 0; i < filter.getSlots(); i++)
                 {
                     boolean equal = ItemStack.areItemStacksEqual(compare, filter.getStackInSlot(i));
-                    if (blacklist)
+                    if (equal)
                     {
-                        if (equal)
-                            return stack;
+                        return blacklist ? stack : super.insertItem(slot, stack, simulate);
                     }
-                    else
-                    {
-                        if (equal)
-                            return super.insertItem(slot, stack, simulate);
-                        else
-                            return stack;
-                    }
-                    return super.insertItem(slot, stack, simulate);
                 }
-                return stack;
+                return blacklist ? super.insertItem(slot, stack, simulate) : stack;
             }
         };
         this.transferCooldown = -1;
@@ -91,7 +83,7 @@ public class TileGratedHopper extends TileBase implements ITileTransferable
     
     public EnumFacing getFacing()
     {
-        return this.world.getBlockState(this.getPos()).getValue(BlockGratedHopper.FACING);
+        return this.world.getBlockState(this.getPos()).getValue(BlockFilterHopper.FACING);
     }
 
     @Override
@@ -195,7 +187,7 @@ public class TileGratedHopper extends TileBase implements ITileTransferable
     @Override
     public boolean transferOut()
     {
-        EnumFacing face = BlockGratedHopper.getFacing(this.getBlockMetadata());
+        EnumFacing face = world.getBlockState(pos).getValue(IBlockFaceable.FACING_NO_UP);
         TileEntity testTile = world.getTileEntity(pos.offset(face));
         if (testTile != null && testTile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face.getOpposite()))
         {

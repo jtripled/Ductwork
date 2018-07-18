@@ -3,8 +3,8 @@
   "rewards": {
     "recipes": [
       "ductwork:item_duct",
-      "ductwork:grated_hopper",
-      "ductwork:grated_hopper_1"
+      "ductwork:filter_hopper",
+      "ductwork:filter_hopper_1"
     ]
   },
   "criteria": {

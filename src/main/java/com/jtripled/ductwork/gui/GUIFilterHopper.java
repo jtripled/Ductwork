@@ -31,6 +31,14 @@ public class GUIFilterHopper extends GuiContainer
     }
     
     @Override
+    public void drawScreen(int mouseX, int mouseY, float partialTicks)
+    {
+        drawDefaultBackground();
+        super.drawScreen(mouseX, mouseY, partialTicks);
+        this.renderHoveredToolTip(mouseX, mouseY);
+    }
+    
+    @Override
     public void initGui()
     {
         super.initGui();
@@ -51,10 +59,6 @@ public class GUIFilterHopper extends GuiContainer
         drawTexturedModalRect(x, y, 0, 0, xSize, ySize);
         if (tile.isBlacklist())
             drawTexturedModalRect(x + 44, y + 45, 0, ySize, 88, 16);
-        
-        //blacklistButton.x = x + 138;
-        //blacklistButton.y = y + 43;
-        //blacklistButton.drawButton(mc, mouseX, mouseY, ticks);
     }
 
     @Override

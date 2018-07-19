@@ -19,6 +19,14 @@ public class GUIItemDuct extends GuiContainer
         super(container);
         this.ySize = 132;
     }
+    
+    @Override
+    public void drawScreen(int mouseX, int mouseY, float partialTicks)
+    {
+        drawDefaultBackground();
+        super.drawScreen(mouseX, mouseY, partialTicks);
+        this.renderHoveredToolTip(mouseX, mouseY);
+    }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float ticks, int mouseX, int mouseY)
@@ -40,9 +48,5 @@ public class GUIItemDuct extends GuiContainer
         
         fontRenderer.drawString("Inventory", 8, ySize - 93, 0x404040);
         fontRenderer.drawString(Ductwork.getProxy().localize("tile.item_duct.name"), 8, 6, 0x404040);
-        GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
-        mc.getTextureManager().bindTexture(TEXTURE);
-        
-        
     }
 }

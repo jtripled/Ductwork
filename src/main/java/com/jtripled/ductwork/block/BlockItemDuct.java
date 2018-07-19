@@ -50,15 +50,14 @@ public final class BlockItemDuct extends Block
         this.setUnlocalizedName(NAME);
         this.setRegistryName(RESOURCE);
         this.setCreativeTab(CreativeTabs.REDSTONE);
+        this.setDefaultState(this.getDefaultState().withProperty(FACING, EnumFacing.NORTH).withProperty(UP, false).withProperty(DOWN, false).withProperty(NORTH, false).withProperty(EAST, false).withProperty(SOUTH, false).withProperty(WEST, false));
     }
     
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
     {
         if (!world.isRemote)
-        {
             player.openGui(Ductwork.getInstance(), GUI_ID, world, pos.getX(), pos.getY(), pos.getZ());
-        }
         return true;
     }
     
@@ -114,7 +113,7 @@ public final class BlockItemDuct extends Block
     {
         AxisAlignedBB bb = BOX;
         state = state.getActualState(world, pos);
-        switch (getFacing(state))
+        switch (state.getValue(FACING))
         {
             case UP: state = state.withProperty(UP, true); break;
             case DOWN: state = state.withProperty(DOWN, true); break;
@@ -123,12 +122,12 @@ public final class BlockItemDuct extends Block
             case SOUTH: state = state.withProperty(SOUTH, true); break;
             case WEST: state = state.withProperty(WEST, true); break;
         }
-        if (isConnectedUp(state))    bb = bb.expand( 0,       0.3125, 0);
-        if (isConnectedDown(state))  bb = bb.expand( 0,      -0.3125, 0);
-        if (isConnectedSouth(state)) bb = bb.expand( 0,       0,      0.3125);
-        if (isConnectedNorth(state)) bb = bb.expand( 0,       0,     -0.3125);
-        if (isConnectedEast(state))  bb = bb.expand( 0.3125,  0,      0);
-        if (isConnectedWest(state))  bb = bb.expand(-0.3125,  0,      0);
+        if (state.getValue(UP))    bb = bb.expand( 0,       0.3125, 0);
+        if (state.getValue(DOWN))  bb = bb.expand( 0,      -0.3125, 0);
+        if (state.getValue(SOUTH)) bb = bb.expand( 0,       0,      0.3125);
+        if (state.getValue(NORTH)) bb = bb.expand( 0,       0,     -0.3125);
+        if (state.getValue(EAST))  bb = bb.expand( 0.3125,  0,      0);
+        if (state.getValue(WEST))  bb = bb.expand(-0.3125,  0,      0);
         return bb;
     }
     
@@ -169,70 +168,5 @@ public final class BlockItemDuct extends Block
         TileEntity tile = world.getTileEntity(otherPos);
         return tile != null && face != state.getValue(FACING)
                 && tile.hasCapability(ITEM_HANDLER_CAPABILITY, face.getOpposite());
-    }
-    
-    public static EnumFacing getFacing(IBlockState state)
-    {
-        return state.getValue(FACING);
-    }
-    
-    public static boolean isFacingUp(IBlockState state)
-    {
-        return state.getValue(FACING) == EnumFacing.UP;
-    }
-    
-    public static boolean isFacingDown(IBlockState state)
-    {
-        return state.getValue(FACING) == EnumFacing.DOWN;
-    }
-    
-    public static boolean isFacingNorth(IBlockState state)
-    {
-        return state.getValue(FACING) == EnumFacing.NORTH;
-    }
-    
-    public static boolean isFacingEast(IBlockState state)
-    {
-        return state.getValue(FACING) == EnumFacing.EAST;
-    }
-    
-    public static boolean isFacingSouth(IBlockState state)
-    {
-        return state.getValue(FACING) == EnumFacing.SOUTH;
-    }
-    
-    public static boolean isFacingWest(IBlockState state)
-    {
-        return state.getValue(FACING) == EnumFacing.WEST;
-    }
-    
-    public static boolean isConnectedUp(IBlockState state)
-    {
-        return state.getValue(UP);
-    }
-    
-    public static boolean isConnectedDown(IBlockState state)
-    {
-        return state.getValue(DOWN);
-    }
-    
-    public static boolean isConnectedNorth(IBlockState state)
-    {
-        return state.getValue(NORTH);
-    }
-    
-    public static boolean isConnectedEast(IBlockState state)
-    {
-        return state.getValue(EAST);
-    }
-    
-    public static boolean isConnectedSouth(IBlockState state)
-    {
-        return state.getValue(SOUTH);
-    }
-    
-    public static boolean isConnectedWest(IBlockState state)
-    {
-        return state.getValue(WEST);
     }
 }

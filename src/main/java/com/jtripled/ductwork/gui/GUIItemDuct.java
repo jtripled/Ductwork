@@ -39,7 +39,7 @@ public class GUIItemDuct extends GuiContainer
         int y = (height - ySize) / 2;
         
         fontRenderer.drawString("Inventory", 8, ySize - 93, 0x404040);
-        fontRenderer.drawString("Item Duct", 8, 6, 0x404040);
+        fontRenderer.drawString(Ductwork.getProxy().localize("tile.item_duct.name"), 8, 6, 0x404040);
         GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
         mc.getTextureManager().bindTexture(TEXTURE);
         

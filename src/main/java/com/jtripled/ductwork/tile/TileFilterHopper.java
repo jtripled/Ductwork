@@ -5,6 +5,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -91,6 +93,7 @@ public class TileFilterHopper extends TileEntity implements ITickable
     public void setBlacklist(boolean blacklist)
     {
         this.blacklist = blacklist;
+        markDirty();
     }
 
     @Override
@@ -135,6 +138,30 @@ public class TileFilterHopper extends TileEntity implements ITickable
         filter.deserializeNBT(compound.getCompoundTag("filter"));
         inventory.deserializeNBT(compound.getCompoundTag("inventory"));
         super.readFromNBT(compound);
+    }
+    
+    @Override
+    public void onDataPacket(NetworkManager network, SPacketUpdateTileEntity packet)
+    {
+        readFromNBT(packet.getNbtCompound());
+    }
+    
+    @Override
+    public SPacketUpdateTileEntity getUpdatePacket()
+    {
+        return new SPacketUpdateTileEntity(getPos(), 1, getUpdateTag());
+    }
+    
+    @Override
+    public NBTTagCompound getUpdateTag()
+    {
+        return writeToNBT(super.getUpdateTag());
+    }
+    
+    @Override
+    public void handleUpdateTag(NBTTagCompound compound)
+    {
+        readFromNBT(compound);
     }
 
     @Override

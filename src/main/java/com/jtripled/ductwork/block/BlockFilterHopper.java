@@ -41,15 +41,14 @@ public final class BlockFilterHopper extends Block
         this.setUnlocalizedName(NAME);
         this.setRegistryName(RESOURCE);
         this.setCreativeTab(CreativeTabs.REDSTONE);
+        this.setDefaultState(this.getDefaultState().withProperty(FACING, EnumFacing.NORTH).withProperty(ENABLED, true));
     }
     
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
     {
         if (!world.isRemote)
-        {
             player.openGui(Ductwork.getInstance(), GUI_ID, world, pos.getX(), pos.getY(), pos.getZ());
-        }
         return true;
     }
     
@@ -70,13 +69,13 @@ public final class BlockFilterHopper extends Block
     @Override
     public IBlockState getStateFromMeta(int meta)
     {
-        return this.getDefaultState().withProperty(FACING, EnumFacing.getFront(meta)).withProperty(ENABLED, (meta & 8) != 8);
+        return this.getDefaultState().withProperty(FACING, EnumFacing.getFront(meta & 7)).withProperty(ENABLED, (meta & 8) != 8);
     }
 
     @Override
     public int getMetaFromState(IBlockState state)
     {
-        return state.getValue(FACING).getIndex() | (state.getValue(ENABLED) ? 8 : 0);
+        return (state.getValue(FACING).getIndex() & 7) | (state.getValue(ENABLED) ? 8 : 0);
     }
     
     @Override

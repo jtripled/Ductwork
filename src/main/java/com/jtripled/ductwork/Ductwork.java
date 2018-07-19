@@ -2,6 +2,8 @@ package com.jtripled.ductwork;
 
 import com.jtripled.ductwork.container.ContainerFilterHopper;
 import com.jtripled.ductwork.container.ContainerItemDuct;
+import com.jtripled.ductwork.gui.GUIFilterHopper;
+import com.jtripled.ductwork.gui.GUIItemDuct;
 import com.jtripled.ductwork.network.MessageHandlerHopperBlacklist;
 import com.jtripled.ductwork.network.MessageHopperBlacklist;
 import com.jtripled.ductwork.proxy.Proxy;
@@ -37,7 +39,7 @@ public class Ductwork implements IGuiHandler
     public static Ductwork INSTANCE;
     
     @SidedProxy(serverSide = "com.jtripled." + ID + ".proxy.ProxyServer", clientSide = "com.jtripled." + ID + ".proxy.ProxyClient")
-    public static final Proxy PROXY = null;
+    public static Proxy PROXY;
     
     public static final SimpleNetworkWrapper NETWORK = new SimpleNetworkWrapper(ID);
     
@@ -66,7 +68,7 @@ public class Ductwork implements IGuiHandler
         return PROXY;
     }
     
-    public SimpleNetworkWrapper getNetwork()
+    public static SimpleNetworkWrapper getNetwork()
     {
         return NETWORK;
     }
@@ -106,6 +108,13 @@ public class Ductwork implements IGuiHandler
     @Override
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
     {
+        switch (ID)
+        {
+            case 0:
+                return new GUIFilterHopper((ContainerFilterHopper) getServerGuiElement(ID, player, world, x, y, z));
+            case 1:
+                return new GUIItemDuct((ContainerItemDuct) getServerGuiElement(ID, player, world, x, y, z));
+        }
         return null;
     }
 }

@@ -1,50 +1,125 @@
 package com.jtripled.ductwork.block;
 
-import com.jtripled.ductwork.container.ContainerFilterHopper;
-import com.jtripled.ductwork.gui.GUIFilterHopper;
+import com.jtripled.ductwork.Ductwork;
 import com.jtripled.ductwork.tile.TileFilterHopper;
-import com.jtripled.voxen.block.BlockBase;
-import com.jtripled.voxen.block.IBlockEnableable;
-import com.jtripled.voxen.block.IBlockFaceable;
-import com.jtripled.voxen.block.IBlockStorage;
-import com.jtripled.voxen.gui.GUIHolder;
-import com.jtripled.voxen.util.Tab;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.state.BlockStateContainer;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  *
  * @author jtripled
  */
-public class BlockFilterHopper extends BlockBase implements IBlockFaceable.NoUp, IBlockEnableable, IBlockStorage, GUIHolder
+public final class BlockFilterHopper extends Block
 {
+    public static final String NAME = "filter_hopper";
+    public static final ResourceLocation RESOURCE = new ResourceLocation(Ductwork.ID, NAME);
+    public static final int GUI_ID = 0;
+    
+    public static final PropertyDirection FACING = PropertyDirection.create("facing", (EnumFacing face) -> { return face != EnumFacing.UP; });
+    public static final PropertyBool ENABLED = PropertyBool.create("enabled");
+    
     public BlockFilterHopper()
     {
-        super("filter_hopper", Material.IRON);
-        this.setTab(Tab.REDSTONE);
-        this.setItem();
-        this.setTileClass(TileFilterHopper.class);
-        this.setFullCube(false);
-        this.setOpaque(false);
-        this.setRenderLayer(BlockRenderLayer.CUTOUT_MIPPED);
-        this.setTopSolid(true);
-        this.setRenderSides(true);
+        super(Material.IRON);
+        this.setUnlocalizedName(NAME);
+        this.setRegistryName(RESOURCE);
+        this.setCreativeTab(CreativeTabs.REDSTONE);
     }
     
     @Override
-    public ContainerFilterHopper getServerGUI(EntityPlayer player, World world, BlockPos pos)
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
     {
-        return new ContainerFilterHopper((TileFilterHopper) world.getTileEntity(pos), player.inventory);
+        if (!world.isRemote)
+        {
+            player.openGui(Ductwork.getInstance(), GUI_ID, world, pos.getX(), pos.getY(), pos.getZ());
+        }
+        return true;
     }
     
     @Override
-    public GUIFilterHopper getClientGUI(EntityPlayer player, World world, BlockPos pos)
+    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
     {
-        return new GUIFilterHopper(getServerGUI(player, world, pos));
+        if (facing.getOpposite() == EnumFacing.UP)
+            return this.getDefaultState().withProperty(FACING, EnumFacing.DOWN);
+        return this.getDefaultState().withProperty(FACING, facing.getOpposite());
+    }
+
+    @Override
+    protected BlockStateContainer createBlockState()
+    {
+        return new BlockStateContainer(this, new IProperty[] {FACING, ENABLED});
+    }
+
+    @Override
+    public IBlockState getStateFromMeta(int meta)
+    {
+        return this.getDefaultState().withProperty(FACING, EnumFacing.getFront(meta)).withProperty(ENABLED, (meta & 8) != 8);
+    }
+
+    @Override
+    public int getMetaFromState(IBlockState state)
+    {
+        return state.getValue(FACING).getIndex() | (state.getValue(ENABLED) ? 8 : 0);
     }
     
+    @Override
+    public boolean hasTileEntity(IBlockState state)
+    {
+        return true;
+    }
     
+    @Override
+    public TileFilterHopper createTileEntity(World world, IBlockState state)
+    {
+        return new TileFilterHopper();
+    }
+    
+    @Override
+    public boolean isFullCube(IBlockState state)
+    {
+        return false;
+    }
+    
+    @Override
+    public boolean isOpaqueCube(IBlockState state)
+    {
+        return false;
+    }
+    
+    @Override
+    public boolean isTopSolid(IBlockState state)
+    {
+        return true;
+    }
+    
+    @SideOnly(Side.CLIENT)
+    @Override
+    public boolean shouldSideBeRendered(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side)
+    {
+        return true;
+    }
+    
+    @SideOnly(Side.CLIENT)
+    @Override
+    public BlockRenderLayer getBlockLayer()
+    {
+        return BlockRenderLayer.CUTOUT_MIPPED;
+    }
 }

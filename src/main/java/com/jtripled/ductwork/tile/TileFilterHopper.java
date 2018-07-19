@@ -1,15 +1,13 @@
 package com.jtripled.ductwork.tile;
 
 import com.jtripled.ductwork.block.BlockFilterHopper;
-import com.jtripled.voxen.block.IBlockFaceable;
-import com.jtripled.voxen.tile.ITileTransferable;
-import com.jtripled.voxen.tile.TileBase;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -19,7 +17,7 @@ import net.minecraftforge.items.ItemStackHandler;
  *
  * @author jtripled
  */
-public class TileFilterHopper extends TileBase implements ITileTransferable
+public class TileFilterHopper extends TileEntity implements ITickable
 {
     private final ItemStackHandler filter;
     private final ItemStackHandler inventory;
@@ -28,7 +26,6 @@ public class TileFilterHopper extends TileBase implements ITileTransferable
     
     public TileFilterHopper()
     {
-        TileEntity tile = this;
         this.filter = new ItemStackHandler(5) {
             @Override
             public int getSlotLimit(int slot)
@@ -85,6 +82,16 @@ public class TileFilterHopper extends TileBase implements ITileTransferable
     {
         return this.world.getBlockState(this.getPos()).getValue(BlockFilterHopper.FACING);
     }
+    
+    public boolean isBlacklist()
+    {
+        return blacklist;
+    }
+    
+    public void setBlacklist(boolean blacklist)
+    {
+        this.blacklist = blacklist;
+    }
 
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing)
@@ -109,21 +116,11 @@ public class TileFilterHopper extends TileBase implements ITileTransferable
     {
         return filter;
     }
-    
-    public boolean isBlacklist()
-    {
-        return blacklist;
-    }
-    
-    public void setBlacklist(boolean blacklist)
-    {
-        this.blacklist = blacklist;
-    }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound)
     {
-        writeTransferCooldown(compound);
+        compound.setInteger("cooldown", transferCooldown);
         compound.setBoolean("blacklist", blacklist);
         compound.setTag("filter", filter.serializeNBT());
         compound.setTag("inventory", inventory.serializeNBT());
@@ -133,23 +130,34 @@ public class TileFilterHopper extends TileBase implements ITileTransferable
     @Override
     public void readFromNBT(NBTTagCompound compound)
     {
-        readTransferCooldown(compound);
+        transferCooldown = compound.getInteger("cooldown");
         blacklist = compound.getBoolean("blacklist");
         filter.deserializeNBT(compound.getCompoundTag("filter"));
         inventory.deserializeNBT(compound.getCompoundTag("inventory"));
         super.readFromNBT(compound);
     }
-    
+
     @Override
-    public int getTransferCooldown()
+    public void update()
     {
-        return transferCooldown;
-    }
-    
-    @Override
-    public void setTransferCooldown(int cooldown)
-    {
-        transferCooldown = cooldown;
+        if (getWorld() != null && !getWorld().isRemote)
+        {
+            transferCooldown -= 1;
+            if (transferCooldown <= 0)
+            {
+                transferCooldown = 0;
+                boolean flag = false;
+                if (!isEmpty())
+                    flag = transferOut();
+                if (!isFull())
+                    flag = transferIn() || flag;
+                if (flag)
+                {
+                    transferCooldown = 8;
+                    markDirty();
+                }
+            }
+        }
     }
 
     public boolean isEmpty()
@@ -172,22 +180,9 @@ public class TileFilterHopper extends TileBase implements ITileTransferable
         return true;
     }
     
-    @Override
-    public boolean canTransferOut()
-    {
-        return !isEmpty();
-    }
-    
-    @Override
-    public boolean canTransferIn()
-    {
-        return !isFull();
-    }
-    
-    @Override
     public boolean transferOut()
     {
-        EnumFacing face = world.getBlockState(pos).getValue(IBlockFaceable.FACING_NO_UP);
+        EnumFacing face = getFacing();
         TileEntity testTile = world.getTileEntity(pos.offset(face));
         if (testTile != null && testTile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face.getOpposite()))
         {
@@ -218,7 +213,6 @@ public class TileFilterHopper extends TileBase implements ITileTransferable
         return false;
     }
     
-    @Override
     public boolean transferIn()
     {
         TileEntity testTile = world.getTileEntity(pos.up());

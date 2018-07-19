@@ -1,8 +1,7 @@
 package com.jtripled.ductwork.block;
 
+import com.jtripled.ductwork.Ductwork;
 import com.jtripled.ductwork.tile.TileItemDuct;
-import com.jtripled.voxen.block.IBlockConnectable;
-import com.jtripled.voxen.block.IBlockFaceable;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -17,6 +16,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -32,7 +32,9 @@ import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABI
 public final class BlockItemDuct extends Block
 {
     public static final String NAME = "item_duct";
+    public static final ResourceLocation RESOURCE = new ResourceLocation(Ductwork.ID, NAME);
     public static final AxisAlignedBB BOX = new AxisAlignedBB(0.3125, 0.3125, 0.3125, 0.6875, 0.6875, 0.6875);
+    public static final int GUI_ID = 1;
     
     public static final PropertyDirection FACING = PropertyDirection.create("facing");
     public static final PropertyBool UP = PropertyBool.create("up");
@@ -45,6 +47,8 @@ public final class BlockItemDuct extends Block
     public BlockItemDuct()
     {
         super(Material.IRON);
+        this.setUnlocalizedName(NAME);
+        this.setRegistryName(RESOURCE);
         this.setCreativeTab(CreativeTabs.REDSTONE);
     }
     
@@ -53,7 +57,7 @@ public final class BlockItemDuct extends Block
     {
         if (!world.isRemote)
         {
-            //open gui
+            player.openGui(Ductwork.getInstance(), GUI_ID, world, pos.getX(), pos.getY(), pos.getZ());
         }
         return true;
     }
@@ -104,6 +108,7 @@ public final class BlockItemDuct extends Block
     {
         return new TileItemDuct();
     }
+    
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos)
     {

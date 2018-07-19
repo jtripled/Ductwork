@@ -1,15 +1,13 @@
 package com.jtripled.ductwork.tile;
 
-import com.jtripled.voxen.block.IBlockConnectable;
-import com.jtripled.voxen.block.IBlockFaceable;
-import com.jtripled.voxen.tile.ITileTransferable;
-import com.jtripled.voxen.tile.TileBase;
+import com.jtripled.ductwork.block.BlockItemDuct;
 import javax.annotation.Nullable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -19,7 +17,7 @@ import net.minecraftforge.items.ItemStackHandler;
  *
  * @author jtripled
  */
-public class TileItemDuct extends TileBase implements ITileTransferable
+public class TileItemDuct extends TileEntity implements ITickable
 {
     private final ItemStackHandler inventory;
     private EnumFacing previous;
@@ -34,7 +32,7 @@ public class TileItemDuct extends TileBase implements ITileTransferable
     
     public EnumFacing getFacing()
     {
-        return this.world.getBlockState(this.getPos()).getValue(IBlockFaceable.FACING);
+        return this.world.getBlockState(this.getPos()).getValue(BlockItemDuct.FACING);
     }
 
     @Override
@@ -57,44 +55,46 @@ public class TileItemDuct extends TileBase implements ITileTransferable
     {
         return inventory;
     }
-
+    
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound)
     {
-        writeTransferCooldown(compound);
+        compound.setInteger("cooldown", transferCooldown);
         compound.setInteger("previous", previous.getIndex());
         compound.setTag("inventory", inventory.serializeNBT());
         return super.writeToNBT(compound);
     }
-
+    
     @Override
     public void readFromNBT(NBTTagCompound compound)
     {
-        readTransferCooldown(compound);
+        transferCooldown = compound.getInteger("cooldown");
         previous = EnumFacing.getFront(compound.getInteger("previous"));
         inventory.deserializeNBT(compound.getCompoundTag("inventory"));
         super.readFromNBT(compound);
     }
 
     @Override
-    public int getTransferCooldown()
+    public void update()
     {
-        return transferCooldown;
-    }
-
-    @Override
-    public void setTransferCooldown(int cooldown)
-    {
-        transferCooldown = cooldown;
+        if (this.getWorld() != null && !this.getWorld().isRemote)
+        {
+            transferCooldown -= 1;
+            if (transferCooldown <= 0)
+            {
+                transferCooldown = 0;
+                boolean flag = false;
+                if (!inventory.getStackInSlot(0).isEmpty())
+                    flag = transferOut();
+                if (flag)
+                {
+                    transferCooldown = 8;
+                    this.markDirty();
+                }
+            }
+        }
     }
     
-    @Override
-    public boolean canTransferOut()
-    {
-        return !inventory.getStackInSlot(0).isEmpty();
-    }
-    
-    @Override
     public boolean transferOut()
     {
         EnumFacing next = getNextFacing(previous, world.getBlockState(pos).getActualState(world, pos));
@@ -142,16 +142,16 @@ public class TileItemDuct extends TileBase implements ITileTransferable
         }
         for (EnumFacing face : next)
         {
-            if (face != state.getValue(IBlockFaceable.FACING))
+            if (face != state.getValue(BlockItemDuct.FACING))
             {
                 switch (face)
                 {
-                    case DOWN: if (state.getValue(IBlockConnectable.All.DOWN)) return face; break;
-                    case UP: if (state.getValue(IBlockConnectable.All.UP)) return face; break;
-                    case NORTH: if (state.getValue(IBlockConnectable.All.NORTH)) return face; break;
-                    case SOUTH: if (state.getValue(IBlockConnectable.All.SOUTH)) return face; break;
-                    case WEST: if (state.getValue(IBlockConnectable.All.WEST)) return face; break;
-                    default: if (state.getValue(IBlockConnectable.All.EAST)) return EnumFacing.EAST; break;
+                    case DOWN: if (state.getValue(BlockItemDuct.DOWN)) return face; break;
+                    case UP: if (state.getValue(BlockItemDuct.UP)) return face; break;
+                    case NORTH: if (state.getValue(BlockItemDuct.NORTH)) return face; break;
+                    case SOUTH: if (state.getValue(BlockItemDuct.SOUTH)) return face; break;
+                    case WEST: if (state.getValue(BlockItemDuct.WEST)) return face; break;
+                    default: if (state.getValue(BlockItemDuct.EAST)) return EnumFacing.EAST; break;
                 }
             }
         }

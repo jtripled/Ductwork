@@ -27,7 +27,6 @@ import net.minecraftforge.fml.relauncher.Side;
  * @author jtripled
  */
 @Mod(modid = Ductwork.ID, name = Ductwork.NAME, version = Ductwork.VERSION, dependencies = Ductwork.DEPENDS)
-@Mod.EventBusSubscriber
 public class Ductwork implements IGuiHandler
 {
     public static final String ID = "ductwork";

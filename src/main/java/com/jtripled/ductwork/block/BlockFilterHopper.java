@@ -11,7 +11,9 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -50,6 +52,39 @@ public final class BlockFilterHopper extends Block
         if (!world.isRemote)
             player.openGui(Ductwork.getInstance(), GUI_ID, world, pos.getX(), pos.getY(), pos.getZ());
         return true;
+    }
+    
+    @Override
+    public void breakBlock(World world, BlockPos pos, IBlockState state)
+    {
+        TileFilterHopper tile = (TileFilterHopper) world.getTileEntity(pos);
+        
+        for (int i = 0; i < tile.getInventory().getSlots(); ++i)
+        {
+            ItemStack stack = tile.getInventory().getStackInSlot(i);
+            if (!stack.isEmpty())
+            {
+                double x = pos.getX();
+                double y = pos.getY();
+                double z = pos.getZ();
+                
+                float f = RANDOM.nextFloat() * 0.8F + 0.1F;
+                float f1 = RANDOM.nextFloat() * 0.8F + 0.1F;
+                float f2 = RANDOM.nextFloat() * 0.8F + 0.1F;
+
+                while (!stack.isEmpty())
+                {
+                    EntityItem entityitem = new EntityItem(world, x + (double)f, y + (double)f1, z + (double)f2, stack.splitStack(RANDOM.nextInt(21) + 10));
+                    float f3 = 0.05F;
+                    entityitem.motionX = RANDOM.nextGaussian() * 0.05000000074505806D;
+                    entityitem.motionY = RANDOM.nextGaussian() * 0.05000000074505806D + 0.20000000298023224D;
+                    entityitem.motionZ = RANDOM.nextGaussian() * 0.05000000074505806D;
+                    world.spawnEntity(entityitem);
+                }
+            }
+        }
+
+        super.breakBlock(world, pos, state);
     }
     
     @Override

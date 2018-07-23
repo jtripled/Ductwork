@@ -53,11 +53,13 @@ public final class ContainerItemDuct extends Container
             ItemStack itemstack1 = slot.getStack();
             itemstack = itemstack1.copy();
             if (index >= 36)
+            {
                 if (!this.mergeItemStack(itemstack1, 0, 36, true))
                     return ItemStack.EMPTY;
-            else if (!this.mergeItemStack(itemstack1, 36, inventorySlots.size(), false))
+            }
+            else if (!this.mergeItemStack(itemstack1, 36, 37, false))
                 return ItemStack.EMPTY;
-
+            
             if (itemstack1.isEmpty())
                 slot.putStack(ItemStack.EMPTY);
             else

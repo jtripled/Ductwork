@@ -19,10 +19,7 @@ public class DuctworkItems
     @SubscribeEvent
     public static void onRegisterItems(RegistryEvent.Register<Item> event)
     {
-        event.getRegistry().register(FILTER_HOPPER_ITEM);
-        event.getRegistry().register(ITEM_DUCT_ITEM);
-        
-        Ductwork.getProxy().registerItemRenderer(FILTER_HOPPER_ITEM, "normal");
-        Ductwork.getProxy().registerItemRenderer(ITEM_DUCT_ITEM, "normal");
+        Ductwork.getProxy().registerItem(event, FILTER_HOPPER_ITEM);
+        Ductwork.getProxy().registerItem(event, ITEM_DUCT_ITEM);
     }
 }

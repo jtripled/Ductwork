@@ -8,7 +8,6 @@ import net.minecraft.block.Block;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 
 /**
  *
@@ -23,12 +22,7 @@ public class DuctworkBlocks
     @SubscribeEvent
     public static void onRegisterBlocks(RegistryEvent.Register<Block> event)
     {
-        event.getRegistry().register(FILTER_HOPPER);
-        event.getRegistry().register(ITEM_DUCT);
-        
-        GameRegistry.registerTileEntity(TileFilterHopper.class, FILTER_HOPPER.getRegistryName().toString());
-        GameRegistry.registerTileEntity(TileItemDuct.class, ITEM_DUCT.getRegistryName().toString());
-        
-        Ductwork.getProxy().registerIgnoredProperties(FILTER_HOPPER, BlockFilterHopper.ENABLED);
+        Ductwork.getProxy().registerBlock(event, FILTER_HOPPER, TileFilterHopper.class, BlockFilterHopper.ENABLED);
+        Ductwork.getProxy().registerBlock(event, ITEM_DUCT, TileItemDuct.class);
     }
 }

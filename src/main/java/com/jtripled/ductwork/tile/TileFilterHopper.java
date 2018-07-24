@@ -1,15 +1,23 @@
 package com.jtripled.ductwork.tile;
 
 import com.jtripled.ductwork.block.BlockFilterHopper;
+import java.util.ArrayList;
+import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityHopper;
+import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -110,6 +118,20 @@ public class TileFilterHopper extends TileEntity implements ITickable
                 ? (T)inventory : null;
     }
     
+    public boolean isItemAllowed(ItemStack stack)
+    {
+        ItemStack compare = new ItemStack(stack.getItem(), 1, stack.getMetadata());
+        for (int i = 0; i < filter.getSlots(); i++)
+        {
+            boolean equal = ItemStack.areItemStacksEqual(compare, filter.getStackInSlot(i));
+            if (equal)
+            {
+                return !blacklist;
+            }
+        }
+        return blacklist;
+    }
+    
     public IItemHandler getInventory()
     {
         return inventory;
@@ -177,7 +199,7 @@ public class TileFilterHopper extends TileEntity implements ITickable
                 if (!isEmpty())
                     flag = transferOut();
                 if (!isFull())
-                    flag = transferIn() || flag;
+                    flag = transferIn() || pullStack() || flag;
                 if (flag)
                 {
                     transferCooldown = 8;
@@ -271,5 +293,47 @@ public class TileFilterHopper extends TileEntity implements ITickable
             return false;
         }
         return false;
+    }
+    
+    public boolean pullStack()
+    {
+        for (EntityItem entity : getCaptureItems())
+        {
+            boolean flag = false;
+            if (entity != null)
+            {
+                ItemStack stack = entity.getItem().copy();
+
+                for (int i = 0; i < inventory.getSlots() && !stack.isEmpty(); ++i)
+                {
+                    stack = inventory.insertItem(i, stack, false);
+                }
+
+                if (stack.isEmpty())
+                {
+                    flag = true;
+                    entity.setDead();
+                }
+                else
+                {
+                    entity.setItem(stack);
+                }
+            }
+            if (flag)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public List<EntityItem> getCaptureItems()
+    {
+        List<EntityItem> temp = world.<EntityItem>getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos.getX() - 0.5D, pos.getY(), pos.getZ() - 0.5D, pos.getX() + 0.5D, pos.getY() + 1.5D, pos.getZ() + 0.5D), EntitySelectors.IS_ALIVE);
+        List<EntityItem> entities = new ArrayList<>();
+        for (EntityItem entity : temp)
+            if (isItemAllowed(entity.getItem()))
+                entities.add(entity);
+        return entities;
     }
 }

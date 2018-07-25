@@ -12,7 +12,7 @@ import net.minecraft.util.ResourceLocation;
  */
 public class GUIItemDuct extends GuiContainer
 {
-    public static final ResourceLocation TEXTURE = new ResourceLocation(Ductwork.ID, "textures/gui/item_duct.png");
+    public static final ResourceLocation TEXTURE = new ResourceLocation(Ductwork.getID(), "textures/gui/item_duct.png");
     
     public GUIItemDuct(ContainerItemDuct container)
     {

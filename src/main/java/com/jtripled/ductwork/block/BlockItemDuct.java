@@ -13,14 +13,11 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -35,8 +32,6 @@ import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABI
  */
 public final class BlockItemDuct extends Block
 {
-    public static final String NAME = "item_duct";
-    public static final ResourceLocation RESOURCE = new ResourceLocation(Ductwork.ID, NAME);
     public static final AxisAlignedBB BOX = new AxisAlignedBB(0.3125, 0.3125, 0.3125, 0.6875, 0.6875, 0.6875);
     public static final int GUI_ID = 1;
     
@@ -51,8 +46,8 @@ public final class BlockItemDuct extends Block
     public BlockItemDuct()
     {
         super(Material.IRON);
-        this.setUnlocalizedName(NAME);
-        this.setRegistryName(RESOURCE);
+        this.setUnlocalizedName("item_duct");
+        this.setRegistryName(Ductwork.getID(), "item_duct");
         this.setCreativeTab(CreativeTabs.REDSTONE);
         this.setDefaultState(this.getDefaultState().withProperty(FACING, EnumFacing.NORTH).withProperty(UP, false).withProperty(DOWN, false).withProperty(NORTH, false).withProperty(EAST, false).withProperty(SOUTH, false).withProperty(WEST, false));
     }

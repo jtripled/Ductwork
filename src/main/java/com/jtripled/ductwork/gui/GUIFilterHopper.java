@@ -17,7 +17,7 @@ import net.minecraft.util.text.TextFormatting;
  */
 public class GUIFilterHopper extends GuiContainer
 {
-    public static final ResourceLocation TEXTURE = new ResourceLocation(Ductwork.ID, "textures/gui/filter_hopper.png");
+    public static final ResourceLocation TEXTURE = new ResourceLocation(Ductwork.getID(), "textures/gui/filter_hopper.png");
     
     private final ContainerFilterHopper container;
     private final TileFilterHopper tile;

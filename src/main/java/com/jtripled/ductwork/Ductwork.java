@@ -29,10 +29,10 @@ import net.minecraftforge.fml.relauncher.Side;
 @Mod(modid = Ductwork.ID, name = Ductwork.NAME, version = Ductwork.VERSION, dependencies = Ductwork.DEPENDS)
 public class Ductwork implements IGuiHandler
 {
-    public static final String ID = "ductwork";
-    public static final String NAME = "Ductwork";
-    public static final String VERSION = "1.0";
-    public static final String DEPENDS = "";
+    public static final String ID = "@mod_id@";
+    public static final String NAME = "@mod_name@";
+    public static final String VERSION = "@mod_version@";
+    public static final String DEPENDS = "@mod_depends@";
     
     @Mod.Instance(ID)
     public static Ductwork INSTANCE;

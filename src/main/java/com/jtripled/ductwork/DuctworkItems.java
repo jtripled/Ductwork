@@ -1,7 +1,8 @@
 package com.jtripled.ductwork;
 
+import com.jtripled.ductwork.item.ItemBlockFilterHopper;
+import com.jtripled.ductwork.item.ItemBlockItemDuct;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -13,13 +14,18 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 @Mod.EventBusSubscriber
 public class DuctworkItems
 {
-    public static final Item FILTER_HOPPER_ITEM = new ItemBlock(DuctworkBlocks.FILTER_HOPPER).setRegistryName(DuctworkBlocks.FILTER_HOPPER.getRegistryName()).setUnlocalizedName(DuctworkBlocks.FILTER_HOPPER.getUnlocalizedName());
-    public static final Item ITEM_DUCT_ITEM = new ItemBlock(DuctworkBlocks.ITEM_DUCT).setRegistryName(DuctworkBlocks.ITEM_DUCT.getRegistryName()).setUnlocalizedName(DuctworkBlocks.ITEM_DUCT.getUnlocalizedName());
+    public static final ItemBlockFilterHopper FILTER_HOPPER_ITEM = new ItemBlockFilterHopper(DuctworkBlocks.FILTER_HOPPER);
+    public static final ItemBlockItemDuct ITEM_DUCT_ITEM = new ItemBlockItemDuct(DuctworkBlocks.ITEM_DUCT);
     
     @SubscribeEvent
     public static void onRegisterItems(RegistryEvent.Register<Item> event)
     {
-        Ductwork.getProxy().registerItem(event, FILTER_HOPPER_ITEM);
-        Ductwork.getProxy().registerItem(event, ITEM_DUCT_ITEM);
+        register(event, FILTER_HOPPER_ITEM);
+        register(event, ITEM_DUCT_ITEM);
+    }
+    
+    private static void register(RegistryEvent.Register<Item> event, Item item)
+    {
+        Ductwork.getProxy().registerItem(event, item);
     }
 }
